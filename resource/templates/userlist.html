@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="xxxxx">
+    <meta name="author" content="xxxxx">
+    <meta name="keyword" content="xxxxx">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>用户列表</title>
+    <!-- start: Css -->
+    <link rel="stylesheet" type="text/css" href="../../static/asset/css/bootstrap.min.css">
+    <!-- plugins -->
+    <link rel="stylesheet" type="text/css" href="../../static/asset/css/plugins/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/asset/css/plugins/simple-line-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/asset/css/plugins/animate.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/asset/css/plugins/fullcalendar.min.css"/>
+    <link href="../../static/asset/css/style.css" rel="stylesheet">
+    <!-- end: Css -->
+
+</head>
+
+<body id="mimin" class="dashboard">
+<!-- start: Header -->
+<nav class="navbar navbar-default header navbar-fixed-top">
+    <div class="col-md-12 nav-wrapper">
+        <div class="navbar-header" style="width:100%;">
+            <div class="opener-left-menu is-open"><span class="top"></span> <span class="middle"></span> <span
+                    class="bottom"></span></div>
+            <a href="/user/index" class="navbar-brand"> <b>返回首页</b> </a>
+            <ul class="nav navbar-nav navbar-right user-nav">
+                <li class="user-name"><span>{{.user.Username}}</span></li>
+                <li class="dropdown avatar-dropdown"><img src="../../static/asset/img/avatar.jpg" class="img-circle avatar"
+                                                          alt="user name" data-toggle="dropdown" aria-haspopup="true"
+                                                          aria-expanded="true"/>
+                    <ul class="dropdown-menu user-dropdown">
+                        <li><a href="#"><p value="{{.user.Username}}" id="backli1" onclick="update()"><span
+                                class="fa fa-power-off"></span> 账户管理</p></a></li>
+                        <li><a href="#"><p value="{{.user.Username}}" id="backli" onclick="back()"><span
+                                class="fa fa-power-off"></span> 退出登录</p></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- end: Header -->
+<div class="container-fluid mimin-wrapper">
+    <!-- start:Left Menu -->
+    <div id="left-menu">
+        <div class="sub-left-menu scroll">
+            <ul class="nav nav-list">
+                <li>
+                    <div class="left-bg"></div>
+                </li>
+                <li class="ripple">
+                    <a class="nav-header" href="/user/index"><span class="fa-home fa"></span> 首页
+                        <span class="fa-angle-right fa right-arrow text-right"></span>
+                    </a>
+                </li>
+                <li class="ripple">
+                    <a class="tree-toggle nav-header"><p id="leveljudge" value="20" onclick="leveljudge()"> <span class="fa-diamond fa"></span> 系统管理
+                            <span class="fa-angle-right fa right-arrow text-right"></span> </p>
+                    </a>
+                    <ul class="nav nav-list tree">
+                        <li id="leveljudge1">
+                            <a href="/user/userList/1/no">用户列表</a>
+                            <a href="/meeting/roomList/1/no">会议室列表</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="ripple">
+                    <a class="tree-toggle nav-header"><span class="fa fa-check-square-o"></span> 会议管理
+                        <span class="fa-angle-right fa right-arrow text-right"></span>
+                    </a>
+                    <ul class="nav nav-list tree">
+                        <li>
+                            <a href="/meeting/meetingList/1/no/no/no">会议列表</a>
+                            <a href="/meeting/meetingReport">会议报表</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- end: Left Menu -->
+
+    <!-- start: content -->
+    <div id="content">
+        <div class="panel">
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <h3 class="animated fadeInLeft">用户列表</h3>
+                    <p class="animated fadeInDown"> 业务 <span class="fa-angle-right fa"></span> 用户列表 </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 padding-0 form-element">
+            <div class="col-md-12">
+                <div class="panel form-element-padding">
+
+                    <div class="panel">
+                        <div class="panel-heading">
+{{/*                            <h3>用户列表</h3>*/}}
+                            <div style="display: inline-block;margin-top: 3px;margin-left: 40px">
+                                <label style="margin-right: 10px">用户名</label><input type="text" value="{{.username}}" class="username" placeholder="输入用户名或手机号">
+                            </div>
+                            <button type="button" class="btn btn-success " onclick="query()" style="float: right;margin-top: 8px;margin-right: 80px">查询</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="responsive-table">
+                                <div id="datatables-example_wrapper"
+                                     class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table class="table table-striped table-bordered dataTable no-footer"
+                                                   width="100%" cellspacing="0" style="width: 100%;text-align: center">
+                                                <thead>
+                                                <tr role="row">
+                                                    <th class="sorting_asc" style="width: 20%;text-align: center">id</th>
+                                                    <th class="sorting" style="width: 20%;text-align: center">账号</th>
+                                                    <th class="sorting" style="width: 20%;text-align: center">密码</th>
+                                                    <th class="sorting" style="width: 20%;text-align: center">手机号</th>
+                                                    <th class="sorting" style="width: 20%;text-align: center">编辑</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{range $i,$v := .users}}
+                                                <tr role="row" class="odd">
+                                                    <td class="sorting_1">{{$value4 := sub $.currentPage 1}}{{$value3 := mul $value4 $.pageNum}}{{$value5 := add $value3 $i}}{{add $value5 1}}
+                                                    </td>
+                                                    <td>{{$v.Username}}
+                                                    </td>
+                                                    <td>{{$v.Password}}
+                                                    </td>
+                                                    <td>{{$v.Phone}}
+                                                    </td>
+                                                    <td>
+                                                        {{if eq $v.State 0}}
+                                                            <a href="javascript:void(0);" id="a1"
+                                                               onclick="freezeUser({{$v.Username}},{{$v.State}})">
+                                                                <h7>冻结</h7>
+                                                            </a>
+                                                        {{end}}
+                                                        {{if eq $v.State 1}}
+                                                            <a href="javascript:void(0);" id="a1"
+                                                               onclick="freezeUser({{$v.Username}})">
+                                                                <h7>解冻</h7>
+                                                            </a>
+                                                        {{end}}
+                                                        <a href="javascript:void(0);" id="a2"
+                                                           onclick="deleteUser({{$v.Username}})">
+                                                            <h7>删除</h7>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {{end}}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--显示分页信息-->
+                    <div class="row">
+                        <!--文字信息-->
+                        <div class="col-md-6">
+                            &nbsp;&nbsp;&nbsp;当前第 {{.currentPage}} 页.总共 {{.totalPage}} 页.一共 {{.userCount}} 条记录
+                        </div>
+
+                        <!--点击分页-->
+                        <div class="col-md-6">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+
+                                    <li><a href="/user/userList/1/{{.username}}">首页</a></li>
+                                    <!--上一页-->
+                                    <li>
+                                        {{$value1 := sub .currentPage 1}}
+                                        {{if ge $value1 1}}
+                                            <a href="/user/userList/{{sub .currentPage 1}}/{{.username}}" aria-label="Previous">
+                                                <span aria-hidden="true">上一页</span>
+                                            </a>
+                                        {{end}}
+                                    </li>
+                                    <!--循环遍历连续显示的页面，若是当前页就高亮显示，并且没有链接-->
+                                    {{range $i,$v := .pageSlice}}
+                                        {{if eq $.currentPage $v}}
+                                            <li class="active"><a href="#">{{$v}}</a></li>
+                                        {{end}}
+                                        {{if ne $.currentPage $v}}
+                                            <li><a href="/user/userList/{{$v}}/{{$.username}}">{{$v}}</a></li>
+                                        {{end}}
+                                    {{end}}
+                                    <!--下一页-->
+                                    <li>
+                                        {{$value2 := add .currentPage 1}}
+                                        {{if le $value2 .totalPage}}
+                                            <a href="/user/userList/{{add .currentPage 1}}/{{.username}}"
+                                               aria-label="Next">
+                                                <span aria-hidden="true">下一页</span>
+                                            </a>
+                                        {{end}}
+                                    </li>
+                                    <li><a href="/user/userList/{{.totalPage}}/{{.username}}">尾页</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: content -->
+</div>
+
+<!-- start: Javascript -->
+<script src="../../static/asset/js/jquery.min.js"></script>
+<script src="../../static/asset/js/jquery.ui.min.js"></script>
+<script src="../../static/asset/js/bootstrap.min.js"></script>
+<!-- plugins -->
+<script src="../../static/asset/js/plugins/jquery.nicescroll.js"></script>
+<!-- custom -->
+<script src="../../static/asset/js/main.js"></script>
+<script src="../../static/asset/js/moment.js"></script>
+<script src="../../static/js/Confim.js"></script>
+
+<script type="text/javascript">
+    function deleteUser(username) {
+        let sta = confirm("确定删除此用户吗？");
+        if (sta == true) {
+            $.ajax({
+                url: "/user/deleteUser",
+                type: 'POST',
+                dataType: 'text',
+                data: {username: username},
+            })
+                .done(function (data) {
+                    data = JSON.parse(data)
+                    if (data.data==1) {
+                        window.location.href = "/user/userList/{{.currentPage}}/{{.username}}";
+                    } else {
+                        alert("删除失败");
+                    }
+                })
+                .fail(function () {
+                    console.log("error");
+                })
+                .always(function () {
+                    console.log("complete");
+                });
+        }
+    }
+
+    function freezeUser(username,state) {
+        let sta
+        if(state==0){
+            sta = confirm("确定冻结此用户吗？");
+        }else {
+            sta = confirm("确定解冻此用户吗？");
+        }
+        if (sta == true) {
+            $.ajax({
+                url: "/user/freezeUser",
+                type: 'POST',
+                dataType: 'text',
+                data: {username: username},
+            })
+                .done(function (data) {
+                    data = JSON.parse(data)
+                    if (data.data==1) {
+                        window.location.href = "/user/userList/{{.currentPage}}/{{.username}}";
+                    } else {
+                        alert("操作失败");
+                    }
+                })
+                .fail(function () {
+                    console.log("error");
+                })
+                .always(function () {
+                    console.log("complete");
+                });
+        }
+    }
+
+    function query(){
+        let username = $(".username").val()
+        if(username==""){
+            username = "no"
+        }
+        window.location.href = "/user/userList/{{.currentPage}}/"+username
+    }
+</script>
+<!-- end: Javascript -->
+<script>
+    $("#left-menu-2").click();
+</script>
+
+</body>
+
+</html>

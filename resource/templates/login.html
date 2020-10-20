@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登陆</title>
+    <meta charset="utf-8">
+    <link href="../static/css/style.css" rel='stylesheet' type='text/css'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/login.js"></script>
+    <script type="text/javascript">
+        function login() {
+            //用户名正则，4到16位（字母，数字）
+            const uPattern = /^[a-zA-Z0-9]{4,16}$/;
+            let uname = $("#username").val();
+
+            //密码强度正则，6到15位，包括至少1个字母，1个数字
+            const pPattern = /^.*(?=.{6,})(?=.*\d)(?=.*[A-Za-z]).*$/;
+            let uPassword = $("#password1").val();
+            if (!uPattern.test(uname)) {
+                alert("用户名由4-16位的数字或字母组成");
+            } else if (!pPattern.test(uPassword)) {
+                alert("密码6到15位，包括至少1个字母，1个数字");
+            } else {
+                $.ajax({
+                    url: "/user/login",
+                    type: 'POST',
+                    dataType: 'text',
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password1").val(),
+                    },
+                })
+                    .done(function (data) {
+                        data = JSON.parse(data)   //将json字符串解析为json对象，这样就可以使用点号来访问它的属性
+                        if (data.data == 0) {
+                            window.location.href = "/user/index";
+                        } else {
+                            alert("账号或密码错误");
+                        }
+                    })
+                    .fail(function () {
+                        console.log("error");
+                    })
+                    .always(function () {
+                        console.log("complete");
+                    });
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="main">
+    <div class="login-form">
+        <h1>用户登陆</h1>
+        <div class="head">
+            <img src="../static/images/user.png" alt=""/>
+        </div>
+        <form action="#" method="post">
+            <input type="text" id="username" class="text" placeholder="请输入用户名" value="" name="username" autocomplete="off">
+            <input type="text" id="password" name="password" placeholder="请输入密码" value="">
+            <input type="password" id="password1" name="password1" placeholder="请输入密码" value="" style="display: none;">
+            <div class="submit">
+                <input type="button" value="登陆" onclick="login()">
+            </div>
+{{/*            <p>*/}}
+{{/*                <a href="#">忘记密码 ?</a> &nbsp;&nbsp;&nbsp;*/}}
+{{/*                <%--<a href="/register.do">注册</a>--%>*/}}
+{{/*            </p>*/}}
+        </form>
+    </div>
+    <!--//End-login-form-->
+    <div class="copy-right">
+        <p><a> &nbsp;&nbsp;&nbsp;Copyright &copy; 2019</a></p>
+    </div>
+</div>
+<!-----//end-main---->
+</body>
+</html>

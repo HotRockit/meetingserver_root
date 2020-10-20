@@ -1,0 +1,11 @@
+.div1{
+    margin: 100px auto;
+}
+.div1 div{
+    width: 500px;
+    height: 20px;
+}
+.div1 div div{
+    width: 250px;
+    height: 20px;
+}

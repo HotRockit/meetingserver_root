@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="xxxxx">
+    <meta name="author" content="xxxxx">
+    <meta name="keyword" content="xxxxx">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>会议报表</title>
+    <!-- start: Css -->
+    <link rel="stylesheet" type="text/css" href="../static/asset/css/bootstrap.min.css">
+    <!-- plugins -->
+    <link rel="stylesheet" type="text/css" href="../static/asset/css/plugins/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/asset/css/plugins/simple-line-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/asset/css/plugins/animate.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/asset/css/plugins/fullcalendar.min.css"/>
+    <link href="../static/asset/css/style.css" rel="stylesheet">
+    <!-- end: Css -->
+    <script type="text/javascript">
+        //绘制饼图
+        function drawCircle(canvasId, data_arr, color_arr, text_arr) {
+            let c = document.getElementById(canvasId);
+            let ctx = c.getContext("2d");
+
+            let radius = c.height / 2 - 20; //半径
+            let ox = radius + 20, oy = radius + 20; //圆心
+
+            let width = 30, height = 10; //图例宽和高
+            let posX = ox * 2 + 20, posY = 30;   //
+            let textX = posX + width + 5, textY = posY + 10;
+
+            let startAngle = 0; //起始弧度
+            let endAngle = 0;   //结束弧度
+            for (let i = 0; i < data_arr.length; i++) {
+                //绘制饼图
+                endAngle = endAngle + data_arr[i] * Math.PI * 2; //结束弧度
+                ctx.fillStyle = color_arr[i];
+                ctx.beginPath();
+                ctx.moveTo(ox, oy); //移动到到圆心
+                ctx.arc(ox, oy, radius, startAngle, endAngle, false);
+                ctx.closePath();
+                ctx.fill();
+                startAngle = endAngle; //设置起始弧度
+
+                //绘制比例图及文字
+                ctx.fillStyle = color_arr[i];
+                ctx.fillRect(posX, posY + 20 * i, width, height);
+                ctx.moveTo(posX, posY + 20 * i);
+                ctx.font = 'bold 12px 微软雅黑';    //斜体 30像素 微软雅黑字体
+                ctx.fillStyle = color_arr[i]; //"#000000";
+                let percent = text_arr[i] + "：" + (100 * data_arr[i]).toFixed(1) + "%";
+                ctx.fillText(percent, textX, textY + 20 * i);
+            }
+        }
+
+        //生成随机十六进制颜色
+        function randomColor(){
+            return '#'+Math.floor(Math.random() * 0xffffff).toString(16).padEnd(6, '0');
+        }
+
+        function init() {
+            //绘制饼图
+            //比例数据和颜色
+            let data_arr = []
+            let color_arr = []
+            let text_arr = []
+            {{range $i,$v := .result}}
+            data_arr.push({{$v.Count}})
+            color_arr.push(randomColor())
+            text_arr.push({{$v.MeetingRoomName}})
+            {{end}}
+            //将真实数据转化为比例数据
+            let sum = 0
+            for(let i=0;i<data_arr.length;i++){
+                sum = sum + data_arr[i]
+            }
+            let real_data_arr = []
+            for(let i=0;i<data_arr.length;i++){
+                real_data_arr.push(data_arr[i]*1.0/sum)
+            }
+            drawCircle("canvas_circle", real_data_arr, color_arr, text_arr);
+        }
+
+        //页面加载时执行init()函数
+        window.onload = init;
+    </script>
+    <style type="text/css">
+        .ul {
+            margin: 50px auto 0;
+            width: 958px;
+            height: 40px;
+            border: 1px solid grey;
+            text-align: center;
+            font-size: 0px;
+            padding: 0;
+            line-height: 40px;
+        }
+
+        .ul li {
+            list-style: none;
+            display: inline-block;
+            color: #333;
+            font-size: 14px;
+            margin: 0px 20px;
+        }
+
+        .ul li a {
+            text-decoration: none;
+            font-family: 'Microsoft Yahei';
+            color: #333;
+        }
+
+        .ul li a:hover {
+            color: red;
+        }
+    </style>
+</head>
+
+<body id="mimin" class="dashboard">
+<!-- start: Header -->
+<nav class="navbar navbar-default header navbar-fixed-top">
+    <div class="col-md-12 nav-wrapper">
+        <div class="navbar-header" style="width:100%;">
+            <div class="opener-left-menu is-open"><span class="top"></span> <span class="middle"></span> <span
+                    class="bottom"></span></div>
+            <a href="/user/index" class="navbar-brand"> <b>返回首页</b> </a>
+            <ul class="nav navbar-nav navbar-right user-nav">
+                <li class="user-name"><span>{{.user.Username}}</span></li>
+                <li class="dropdown avatar-dropdown"><img src="../static/asset/img/avatar.jpg" class="img-circle avatar"
+                                                          alt="user name" data-toggle="dropdown" aria-haspopup="true"
+                                                          aria-expanded="true"/>
+                    <ul class="dropdown-menu user-dropdown">
+                        <li><a href="#"><p value="{{.user.Username}}" id="backli1" onclick="update()"><span
+                                class="fa fa-power-off"></span> 账户管理</p></a></li>
+                        <li><a href="#"><p value="{{.user.Username}}" id="backli" onclick="back()"><span
+                                class="fa fa-power-off"></span> 退出登录</p></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- end: Header -->
+<div class="container-fluid mimin-wrapper">
+    <!-- start:Left Menu -->
+    <div id="left-menu">
+        <div class="sub-left-menu scroll">
+            <ul class="nav nav-list">
+                <li>
+                    <div class="left-bg"></div>
+                </li>
+                <li class="ripple">
+                    <a class="nav-header" href="/user/index"><span class="fa-home fa"></span> 首页
+                        <span class="fa-angle-right fa right-arrow text-right"></span>
+                    </a>
+                </li>
+                <li class="ripple">
+                    <a class="tree-toggle nav-header"><p id="leveljudge" value="20" onclick="leveljudge()"> <span class="fa-diamond fa"></span> 系统管理
+                            <span class="fa-angle-right fa right-arrow text-right"></span> </p>
+                    </a>
+                    <ul class="nav nav-list tree">
+                        <li id="leveljudge1">
+                            <a href="/user/userList/1/no">用户列表</a>
+                            <a href="/meeting/roomList/1/no">会议室列表</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="ripple">
+                    <a class="tree-toggle nav-header"><span class="fa fa-check-square-o"></span> 会议管理
+                        <span class="fa-angle-right fa right-arrow text-right"></span>
+                    </a>
+                    <ul class="nav nav-list tree">
+                        <li>
+                            <a href="/meeting/meetingList/1/no/no/no">会议列表</a>
+                            <a href="/meeting/meetingReport">会议报表</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- end: Left Menu -->
+
+    <!-- start: content -->
+    <div id="content">
+        <div class="panel">
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <h3 class="animated fadeInLeft">会议报表</h3>
+                    <p class="animated fadeInDown"> 业务 <span class="fa-angle-right fa"></span> 会议报表 </p>
+                </div>
+            </div>
+        </div>
+        <div style="margin-left: 300px">
+            <h3 style="margin-left: 180px">会议报表饼图</h3>
+            <p>
+                <canvas id="canvas_circle" width="600" height="300" style="border:2px solid #0026ff;">
+                    浏览器不支持canvas
+                </canvas>
+            </p>
+        </div>
+    </div>
+    <!-- end: content -->
+</div>
+<!-- start: Javascript -->
+<script src="../static/asset/js/jquery.min.js"></script>
+<script src="../static/asset/js/jquery.ui.min.js"></script>
+<script src="../static/asset/js/bootstrap.min.js"></script>
+<!-- plugins -->
+<script src="../static/asset/js/plugins/jquery.nicescroll.js"></script>
+<!-- custom -->
+<script src="../static/asset/js/main.js"></script>
+<script src="../static/asset/js/moment.js"></script>
+<script src="../static/js/Confim.js"></script>
+<!-- end: Javascript -->
+<script>
+    $("#left-menu-2").click();
+</script>
+</body>
+</html>
