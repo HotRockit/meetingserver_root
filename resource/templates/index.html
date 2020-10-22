@@ -107,7 +107,7 @@
                 <div class="panel-body text-center">
                   <ul class="normal-list">
                     {{range $i, $v := .latestMeetings}}
-                      <li class="text-left"><span class="right">{{$v.MeetingRoomName}}</span><a href="#"><span class="fa fa-angle-right"></span>{{$v.Reason}}</a></li>
+                      <li class="text-left"><span class="right">{{$v.MeetingRoomName}}</span><a href="/meeting/meetingList/1/{{$v.MeetingRoomName}}/{{$v.User}}/{{$v.BorrowTime}}"><span class="fa fa-angle-right"></span>{{$v.Reason}}</a></li>
                     {{end}}
                   </ul>
                   <p><a href="#">更多信息</a></p>
@@ -128,7 +128,7 @@
                 <div class="panel-body text-center">
                   <ul class="normal-list">
                     {{range $i, $v := .hotMeetingRooms}}
-                      <li class="text-left"><span class="right">{{$v.Count}}</span><a href="#"><span class="fa fa-angle-right"></span>{{$v.MeetingRoomName}}</a></li>
+                      <li class="text-left"><span class="right">{{$v.Count}}</span><a href="/meeting/roomList/1/{{$v.MeetingRoomName}}"><span class="fa fa-angle-right"></span>{{$v.MeetingRoomName}}</a></li>
                     {{end}}
                   </ul>
                   <p><a href="#">更多信息</a></p>

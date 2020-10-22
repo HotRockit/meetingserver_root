@@ -10,8 +10,7 @@ function deleteUser() {
             .done(function (data) {
                 data = JSON.parse(data)
                 if (data.data==1) {
-                    // alert("删除成功");
-                    window.location.href = "/user/login";
+                    window.location.href = "/meeting_root_server";
                 } else {
                     alert("删除失败");
                 }
@@ -40,8 +39,7 @@ function changePassword() {
             .done(function (data) {
                 data = JSON.parse(data)
                 if (data.data==1) {
-                    // alert("修改成功");
-                    window.location.href = "/user/login";
+                    window.location.href = "/meeting_root_server";
                 } else {
                     alert("修改失败");
                 }
@@ -59,29 +57,21 @@ function changePassword() {
 function back() {
     let st = confirm("是否退出?");
     if (st == true) {
-        // $.ajax({
-        //     url: "/doback.do",
-        //     type: 'POST',
-        //     dataType: 'text',
-        //     // data: {
-        //     //     username:$("#backli").attr("value")
-        //     // },
-        // })
-        //     .done(function (data) {
-        //         if (data == 0) {
-        //             alert("退出成功");
-        //             window.location.href = "/user/login";
-        //         } else {
-        //             alert("退出失败");
-        //         }
-        //     })
-        //     .fail(function () {
-        //         console.log("error");
-        //     })
-        //     .always(function () {
-        //         console.log("complete");
-        //     });
-        window.location.href = "/user/login"
+        $.ajax({
+            url: "/user/logout",
+            type: 'POST',
+            dataType: 'text',
+            data: {},
+        })
+            .done(function () {
+                window.location.href = "/meeting_root_server";
+            })
+            .fail(function () {
+                console.log("error");
+            })
+            .always(function () {
+                console.log("complete");
+            });
     }
 }
 

@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"log"
-	"meeting_root_server/controller"
 	"meeting_root_server/router"
 	"meeting_root_server/util"
 	"net/http"
@@ -45,9 +46,12 @@ func main() {
 	}
 
 	app := gin.Default()
+	store := cookie.NewStore([]byte("wdy970603"))
+	store.Options(sessions.Options{Path: "/", MaxAge: 60*5})   //设置过期时间(秒数)
+	app.Use(sessions.Sessions("mySession",store))
 
 	//登陆状态验证
-	//app.Use(AuthMiddleWare())
+	app.Use(AuthMiddleWare())
 	
 	//添加自定义模板函数
 	app.SetFuncMap(template.FuncMap{
@@ -74,16 +78,15 @@ func main() {
 
 func AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//这种方式在请求静态资源文件时也会验证就会出现问题,所以就判断请求路径里面有没有static，如果有的话说明请求的是静态资源文件就直接放行
-		if url := c.Request.URL.String(); url =="/meeting_root_server" || strings.Contains(url,"static"){
+		session := sessions.Default(c)
+		user := session.Get("user")
+		if url := c.Request.URL.String(); url =="/meeting_root_server" || url == "/user/login" || strings.Contains(url,"static") || user == true{
 			c.Next()
-			return
-		}else if controller.User == nil {
-			c.Redirect(http.StatusPermanentRedirect,"/meeting_root_server")
-			c.Next()
-			return
-		}else{
-			c.Next()
+		}else {
+			//之前这里设置的是永久重定向，运行时发现cookie里面有用户信息，但是点击之前重定向的页面，效果还是重定向之后的页面
+			//例如，点击了用户列表界面，但是cookie里面没有用户信息，重定向到了登陆界面，登录之后有了用户信息，但是点击用户列表界面，还是跳转到了登陆界面
+			c.Redirect(http.StatusTemporaryRedirect,"/meeting_root_server")
+			c.Abort()
 			return
 		}
 	}

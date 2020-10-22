@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"meeting_root_server/model"
 	"meeting_root_server/service"
@@ -34,7 +35,8 @@ func (meetingController *AppController) UserController(engine *gin.Engine) {
 		userGroup.GET("/userList/:page/:username",meetingController.UserListHandler)
 		userGroup.POST("/freezeUser",meetingController.FreezeUserHandler)
 		userGroup.GET("/userEdit",meetingController.UserEditHandler)
-		userGroup.POST("deleteSuperUser",meetingController.DeleteSuperUserHandler)
+		userGroup.POST("/deleteSuperUser",meetingController.DeleteSuperUserHandler)
+		userGroup.POST("/logout",meetingController.LogoutHandler)
 	}
 }
 
@@ -109,6 +111,14 @@ func (meetingController *AppController) LoginHandler(c *gin.Context)  {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	result,user := appService.LoginService(username,password)
+	session := sessions.Default(c)
+	if result == 0{  //登陆成将用户设置进session
+		session.Set("user",true)
+		session.Save()
+	}else{
+		session.Set("user",false)
+		session.Save()
+	}
 	util.JsonResult(c,result)
 	User = user
 }
@@ -268,4 +278,11 @@ func (meetingController *AppController) DeleteMeetingsHandler(c *gin.Context) {
 		}
 	}
 	util.JsonResult(c,1)
+}
+
+func (meetingController *AppController) LogoutHandler(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("dummy", "content") // this will mark the session as "written"
+	session.Options(sessions.Options{Path: "/", MaxAge: -1})
+	session.Save()
 }
