@@ -349,6 +349,8 @@
             let newRoomName = $(".roomName").val()
             if(newRoomName==""){
                 alert("会议室名称不能为空")
+                //会议室名称为空就跳出，否则会将空值更到数据库中
+                return
             }
             //添加
             if(flag==true){

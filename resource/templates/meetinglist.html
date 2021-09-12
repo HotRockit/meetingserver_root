@@ -22,14 +22,14 @@
             let sta = confirm("确定删除此会议吗？");
             if (sta == true) {
                 $.ajax({
-                    url: "/meeting/deleteMeeting/"+id,
+                    url: "/meeting/deleteMeeting/" + id,
                     type: 'POST',
                     dataType: 'text',
                     data: {},
                 })
                     .done(function (data) {
                         data = JSON.parse(data)
-                        if (data.data==1) {
+                        if (data.data == 1) {
                             window.location.href = "/meeting/meetingList/{{.currentPage}}/{{.roomName}}/{{.username}}/{{.borrowTime}}"
                         } else {
                             alert("删除失败");
@@ -60,39 +60,40 @@
 
 
         let flag = false
-        function selectMeeting(){
-            let oin=$("input[type='checkbox']")   //这里总是会多选一个。当页面上没有数据时，点击全选发现也能选中一个，但是我用ie浏览器发现没有这个情况，使用chrome内核的浏览的都会出现这种情况，不知道是不是bug
-            if(flag==false){
-                oin.each(function(){
-                    $(this).prop("checked",true)
+
+        function selectMeeting() {
+            let oin = $("input[type='checkbox']")   //这里总是会多选一个。当页面上没有数据时，点击全选发现也能选中一个，但是我用ie浏览器发现没有这个情况，使用chrome内核的浏览的都会出现这种情况，不知道是不是bug
+            if (flag == false) {
+                oin.each(function () {
+                    $(this).prop("checked", true)
                 })
                 flag = true
-            }else {
-                oin.each(function(){
-                    $(this).prop("checked",false)
+            } else {
+                oin.each(function () {
+                    $(this).prop("checked", false)
                 })
                 flag = false
             }
         }
 
-        function deletes(){
+        function deletes() {
             let ids = ""
-            let selects=$(":checkbox:checked")
-            if (selects.length>0) {
-                selects.each(function(){
-                    ids = ids + $(this).attr("class")+","
+            let selects = $(":checkbox:checked")
+            if (selects.length > 0) {
+                selects.each(function () {
+                    ids = ids + $(this).attr("class") + ","
                 })
                 $.ajax({
                     url: "/meeting/deleteMeetings",
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        ids : ids
+                        ids: ids
                     },
                 })
                     .done(function (data) {
                         // data = JSON.parse(data)  //为什么这里和其它地方的返回结果是一样的，但是这里就不用parse来转，转了就报错，其它地方不转会报错
-                        if (data.data==1) {
+                        if (data.data == 1) {
                             window.location.href = "/meeting/meetingList/{{.currentPage}}/{{.roomName}}/{{.username}}/{{.borrowTime}}"
                         } else {
                             alert("删除失败");
@@ -104,25 +105,26 @@
                     .always(function () {
                         console.log("complete");
                     });
-            } else{
+            } else {
                 alert("至少选择一项")
             }
         }
 
-        function query(){
+        function query() {
             let username = $(".username").val()
-            if(username==""){
+            if (username == "") {
                 username = "no"
             }
             let room = $(".buttonText").text()
-            if(room==""){
-                room="no"
+            alert(room)
+            if (room == "") {
+                room = "no"
             }
             let time = $(".borrow_time").val()
-            if(time==""){
-                time="no"
+            if (time == "") {
+                time = "no"
             }
-            window.location.href = "/meeting/meetingList/{{.currentPage}}/"+room+"/"+username+"/"+time
+            window.location.href = "/meeting/meetingList/{{.currentPage}}/" + room + "/" + username + "/" + time
         }
     </script>
 </head>
@@ -133,18 +135,19 @@
     <div class="col-md-12 nav-wrapper">
         <div class="navbar-header" style="width:100%;">
             <div class="opener-left-menu is-open"><span class="top"></span> <span class="middle"></span> <span
-                    class="bottom"></span></div>
+                        class="bottom"></span></div>
             <a href="/user/index" class="navbar-brand"> <b>返回首页</b> </a>
             <ul class="nav navbar-nav navbar-right user-nav">
                 <li class="user-name"><span>{{.user.Username}}</span></li>
-                <li class="dropdown avatar-dropdown"><img src="../../../../static/asset/img/avatar.jpg" class="img-circle avatar"
+                <li class="dropdown avatar-dropdown"><img src="../../../../static/asset/img/avatar.jpg"
+                                                          class="img-circle avatar"
                                                           alt="user name" data-toggle="dropdown" aria-haspopup="true"
                                                           aria-expanded="true"/>
                     <ul class="dropdown-menu user-dropdown">
                         <li><a href="#"><p value="{{.user.Username}}" id="backli1" onclick="update()"><span
-                                class="fa fa-power-off"></span> 账户管理</p></a></li>
+                                            class="fa fa-power-off"></span> 账户管理</p></a></li>
                         <li><a href="#"><p value="{{.user.Username}}" id="backli" onclick="back()"><span
-                                class="fa fa-power-off"></span> 退出登录</p></a></li>
+                                            class="fa fa-power-off"></span> 退出登录</p></a></li>
                     </ul>
                 </li>
             </ul>
@@ -166,8 +169,9 @@
                     </a>
                 </li>
                 <li class="ripple">
-                    <a class="tree-toggle nav-header"><p id="leveljudge" value="20" onclick="leveljudge()"> <span class="fa-diamond fa"></span> 系统管理
-                            <span class="fa-angle-right fa right-arrow text-right"></span> </p>
+                    <a class="tree-toggle nav-header"><p id="leveljudge" value="20" onclick="leveljudge()"><span
+                                    class="fa-diamond fa"></span> 系统管理
+                            <span class="fa-angle-right fa right-arrow text-right"></span></p>
                     </a>
                     <ul class="nav nav-list tree">
                         <li id="leveljudge1">
@@ -207,9 +211,13 @@
                 <div class="panel form-element-padding">
                     <div class="panel">
                         <div class="panel-heading">
-                            <button type="button"  class="btn btn-primary" onclick="selectMeeting()" style="float: left;margin-top: 7px;margin-left: 10px">全选</button>
+                            <button type="button" class="btn btn-primary" onclick="selectMeeting()"
+                                    style="float: left;margin-top: 7px;margin-left: 10px">全选
+                            </button>
                             <div style="display: inline-block;margin-top: 5px;margin-left: 30px">
-                                <label style="margin-right: 10px">用户名</label><input type="text" value="{{.username}}" class="username" placeholder="输入用户名">
+                                <label style="margin-right: 10px">用户名</label><input type="text" value="{{.username}}"
+                                                                                    class="username"
+                                                                                    placeholder="输入用户名">
                             </div>
                             <div class="btn-group" style="margin-left: 35px;display: inline-block;">
                                 <span style="margin-top: 10px;margin-right: 10px;float: left">会议室</span>
@@ -224,18 +232,24 @@
                                            onclick="shows($(this).text())"><i class="fa fa-home"></i></a>
                                     </li>
                                     {{range $i,$v := .rooms}}
-                                    <li>
-                                        <a href="#"
-                                           onclick="shows($(this).text())"><i class="fa fa-home">{{$v.RoomName}}</i></a>
-                                    </li>
+                                        <li>
+                                            <a href="#"
+                                               onclick="shows($(this).text())"><i class="fa fa-home">{{$v.RoomName}}</i></a>
+                                        </li>
                                     {{end}}
                                 </ul>
                             </div>
                             <div style="display: inline-block;margin-top: 5px;margin-left: 35px">
-                                <label style="margin-right: 10px">借用时间</label><input type="text" value="{{.borrowTime}}" class="borrow_time" placeholder="格式:2020-08-06">
+                                <label style="margin-right: 10px">借用时间</label><input type="text" value="{{.borrowTime}}"
+                                                                                     class="borrow_time"
+                                                                                     placeholder="格式:2020-08-06">
                             </div>
-                            <button type="button" class="btn btn-warning " onclick="deletes()" style="margin-left: 35px;">批量删除</button>
-                            <button type="button" class="btn btn-success " onclick="query()" style="float: right;margin-top: 8px;margin-right: 60px">查询</button>
+                            <button type="button" class="btn btn-warning " onclick="deletes()"
+                                    style="margin-left: 35px;">批量删除
+                            </button>
+                            <button type="button" class="btn btn-success " onclick="query()"
+                                    style="float: right;margin-top: 8px;margin-right: 60px">查询
+                            </button>
                         </div>
                         <div class="panel-body">
                             <div class="responsive-table">
@@ -261,7 +275,8 @@
                                                 <tbody>
                                                 {{range $i,$v := .meetings}}
                                                     <tr role="row" class="odd">
-                                                        <td><li><input type="checkbox" class="{{$v.MeetingID}}"/></li>
+                                                        <td>
+                                                            <li><input type="checkbox" class="{{$v.MeetingID}}"/></li>
                                                         </td>
                                                         <td class="sorting_1">{{$value4 := sub $.currentPage 1}}{{$value3 := mul $value4 $.pageNum}}{{$value5 := add $value3 $i}}{{add $value5 1}}
                                                         </td>
@@ -313,7 +328,8 @@
                                     <li>
                                         {{$value1 := sub .currentPage 1}}
                                         {{if ge $value1 1}}
-                                            <a href="/meeting/meetingList/{{sub .currentPage 1}}/{{.roomName}}/{{.username}}/{{.borrowTime}}" aria-label="Previous">
+                                            <a href="/meeting/meetingList/{{sub .currentPage 1}}/{{.roomName}}/{{.username}}/{{.borrowTime}}"
+                                               aria-label="Previous">
                                                 <span aria-hidden="true">上一页</span>
                                             </a>
                                         {{end}}
@@ -325,7 +341,9 @@
                                             <li class="active"><a href="#">{{$v}}</a></li>
                                         {{end}}
                                         {{if ne $.currentPage $v}}
-                                            <li><a href="/meeting/meetingList/{{$v}}/{{$.roomName}}/{{$.username}}/{{$.borrowTime}}">{{$v}}</a></li>
+                                            <li>
+                                                <a href="/meeting/meetingList/{{$v}}/{{$.roomName}}/{{$.username}}/{{$.borrowTime}}">{{$v}}</a>
+                                            </li>
                                         {{end}}
                                     {{end}}
 
