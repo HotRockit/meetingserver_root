@@ -42,7 +42,7 @@ func (appDao *AppDao) QueryMeetingDao(currentPage int, num int, name string, use
 		} else if name == "no" && username != "no" && time == "no" {
 			appDao.Where("user = ?", username).Find(&meetings)
 		} else if name != "no" && username == "no" && time == "no" {
-			appDao.Where("borrow_time = ?", time).Find(&meetings)
+			appDao.Where("meeting_room_name = ?", time).Find(&meetings)
 		} else if name == "no" && username == "no" && time == "no" {
 			appDao.Find(&meetings)
 		} else {
