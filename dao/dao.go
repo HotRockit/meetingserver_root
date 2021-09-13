@@ -62,7 +62,7 @@ func (appDao *AppDao) QueryMeetingDao(currentPage int, num int, name string, use
 		} else if name == "no" && username != "no" && time == "no" {
 			appDao.Where("user = ?", username).Limit(num).Offset((currentPage - 1) * num).Find(&meetings)
 		} else if name != "no" && username == "no" && time == "no" {
-			appDao.Where("meeting_room_name = ?", time).Limit(num).Offset((currentPage - 1) * num).Find(&meetings)
+			appDao.Where("meeting_room_name = ?", name).Limit(num).Offset((currentPage - 1) * num).Find(&meetings)
 		} else if name == "no" && username == "no" && time == "no" {
 			appDao.Limit(num).Offset((currentPage - 1) * num).Find(&meetings)
 		} else {
